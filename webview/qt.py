@@ -12,7 +12,7 @@ import logging
 import threading
 
 from webview.localization import localization
-from webview import OPEN_DIALOG, FOLDER_DIALOG, SAVE_DIALOG
+from webview import _get_item, OPEN_DIALOG, FOLDER_DIALOG, SAVE_DIALOG
 
 logger = logging.getLogger(__name__)
 
@@ -233,14 +233,7 @@ class BrowserView(QMainWindow):
 
     @staticmethod
     def get_instance(attr, value):
-        for i in BrowserView.instances:
-            try:
-                if getattr(i, attr) == value:
-                    return i
-            except AttributeError:
-                break
-
-        return none
+        return _get_item(BrowserView.instances, attr, value)
 
 
 def create_window(uid, title, url, width, height, resizable, fullscreen, min_size,
@@ -260,38 +253,23 @@ def create_window(uid, title, url, width, height, resizable, fullscreen, min_siz
 
 
 def get_current_url(uid):
-    try:
-        return BrowserView.get_instance('uid', uid).get_current_url()
-    except AttributeError:
-        pass
+    return BrowserView.get_instance('uid', uid).get_current_url()
 
 
 def load_url(url, uid):
-    try:
-        BrowserView.get_instance('uid', uid).load_url(url)
-    except AttributeError:
-        pass
+    BrowserView.get_instance('uid', uid).load_url(url)
 
 
 def load_html(content, base_uri, uid):
-    try:
-        BrowserView.get_instance('uid', uid).load_html(content, base_uri)
-    except AttributeError:
-        pass
+    BrowserView.get_instance('uid', uid).load_html(content, base_uri)
 
 
 def destroy_window(uid):
-    try:
-        BrowserView.get_instance('uid', uid).destroy_()
-    except AttributeError:
-        pass
+    BrowserView.get_instance('uid', uid).destroy_()
 
 
 def toggle_fullscreen(uid):
-    try:
-        BrowserView.get_instance('uid', uid).toggle_fullscreen()
-    except AttributeError:
-        pass
+    BrowserView.get_instance('uid', uid).toggle_fullscreen()
 
 
 def create_file_dialog(dialog_type, directory, allow_multiple, save_filename):
@@ -299,7 +277,4 @@ def create_file_dialog(dialog_type, directory, allow_multiple, save_filename):
 
 
 def evaluate_js(script, uid):
-    try:
-        return BrowserView.get_instance('uid', uid).evaluate_js(script)
-    except AttributeError:
-        pass
+    return BrowserView.get_instance('uid', uid).evaluate_js(script)

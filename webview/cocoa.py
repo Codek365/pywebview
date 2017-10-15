@@ -13,7 +13,7 @@ import PyObjCTools.AppHelper
 from objc import nil
 
 from webview.localization import localization
-from webview import OPEN_DIALOG, FOLDER_DIALOG, SAVE_DIALOG
+from webview import _get_item, OPEN_DIALOG, FOLDER_DIALOG, SAVE_DIALOG
 
 # This lines allow to load non-HTTPS resources, like a local app as: http://127.0.0.1:5000
 bundle = AppKit.NSBundle.mainBundle()
@@ -444,18 +444,7 @@ class BrowserView:
 
     @staticmethod
     def get_instance(attr, value):
-        """
-        Return a BrowserView instance by the :value of its given :attribute,
-        and None if no match is found.
-        """
-        for i in BrowserView.instances:
-            try:
-                if getattr(i, attr) == value:
-                    return i
-            except AttributeError:
-                break
-
-        return None
+        return _get_item(BrowserView.instances, attr, value)
 
 
 def create_window(uid, title, url, width, height, resizable, fullscreen, min_size,
@@ -477,42 +466,24 @@ def create_file_dialog(dialog_type, directory, allow_multiple, save_filename):
 
 
 def load_url(url, uid):
-    try:
-        BrowserView.get_instance('uid', uid).load_url(url)
-    except AttributeError:
-        pass
+    BrowserView.get_instance('uid', uid).load_url(url)
 
 
 def load_html(content, base_uri, uid):
-    try:
-        BrowserView.get_instance('uid', uid).load_html(content, base_uri)
-    except AttributeError:
-        pass
+    BrowserView.get_instance('uid', uid).load_html(content, base_uri)
 
 
 def destroy_window(uid):
-    try:
-        BrowserView.get_instance('uid', uid).destroy()
-    except AttributeError:
-        pass
+    BrowserView.get_instance('uid', uid).destroy()
 
 
 def toggle_fullscreen(uid):
-    try:
-        BrowserView.get_instance('uid', uid).toggle_fullscreen()
-    except AttributeError:
-        pass
+    BrowserView.get_instance('uid', uid).toggle_fullscreen()
 
 
 def get_current_url(uid):
-    try:
-        return BrowserView.get_instance('uid', uid).get_current_url()
-    except AttributeError:
-        pass
+    return BrowserView.get_instance('uid', uid).get_current_url()
 
 
 def evaluate_js(script, uid):
-    try:
-        return BrowserView.get_instance('uid', uid).evaluate_js(script)
-    except AttributeError:
-        pass
+    return BrowserView.get_instance('uid', uid).evaluate_js(script)

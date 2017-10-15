@@ -8,7 +8,7 @@ import threading
 import logging
 from uuid import uuid1
 from webview.localization import localization
-from webview import _escape_string, OPEN_DIALOG, FOLDER_DIALOG, SAVE_DIALOG
+from webview import _get_item, _escape_string, OPEN_DIALOG, FOLDER_DIALOG, SAVE_DIALOG
 
 logger = logging.getLogger(__name__)
 
@@ -198,14 +198,7 @@ class BrowserView:
 
     @staticmethod
     def get_instance(attr, value):
-        for i in BrowserView.instances:
-            try:
-                if getattr(i, attr) == value:
-                    return i
-            except AttributeError:
-                break
-
-        return None
+        return _get_item(BrowserView.instances, attr, value)
 
 
 def create_window(uid, title, url, width, height, resizable, fullscreen, min_size,
@@ -223,47 +216,32 @@ def create_window(uid, title, url, width, height, resizable, fullscreen, min_siz
 
 def destroy_window(uid):
     def _destroy_window():
-        try:
-            BrowserView.get_instance('uid', uid).close_window()
-        except AttributeError:
-            pass
+        BrowserView.get_instance('uid', uid).close_window()
 
     GObject.idle_add(_destroy_window)
 
 
 def toggle_fullscreen(uid):
     def _toggle_fullscreen():
-        try:
-            BrowserView.get_instance('uid', uid).toggle_fullscreen()
-        except AttributeError:
-            pass
+        BrowserView.get_instance('uid', uid).toggle_fullscreen()
 
     GObject.idle_add(_toggle_fullscreen)
 
 
 def get_current_url(uid):
-    try:
-        return BrowserView.get_instance('uid', uid).get_current_url()
-    except AttributeError:
-        return None
+    return BrowserView.get_instance('uid', uid).get_current_url()
 
 
 def load_url(url, uid):
     def _load_url():
-        try:
-            BrowserView.get_instance('uid', uid).load_url(url)
-        except AttributeError:
-            pass
+        BrowserView.get_instance('uid', uid).load_url(url)
 
     GObject.idle_add(_load_url)
 
 
 def load_html(content, base_uri, uid):
     def _load_html():
-        try:
-            BrowserView.get_instance('uid', uid).load_html(content, base_uri)
-        except AttributeError:
-            pass
+        BrowserView.get_instance('uid', uid).load_html(content, base_uri)
 
     GObject.idle_add(_load_html)
 
@@ -273,7 +251,4 @@ def create_file_dialog(dialog_type, directory, allow_multiple, save_filename):
 
 
 def evaluate_js(script, uid):
-    try:
-        return BrowserView.get_instance('uid', uid).evaluate_js(script)
-    except AttributeError:
-        return None
+    return BrowserView.get_instance('uid', uid).evaluate_js(script)

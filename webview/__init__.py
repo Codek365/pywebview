@@ -257,6 +257,21 @@ def evaluate_js(script, uid='master'):
         raise Exception("Create a web view window first, before invoking this function")
 
 
+def _get_item(list_, attr, value):
+    """
+    Return the first item from a :list_ of objects whose :attr-ibute matches :value
+    attr should be a string. An exception is thrown if no match is found.
+    """
+    for i in list_:
+        try:
+            if getattr(i, attr) == value:
+                return i
+        except AttributeError:
+            break
+
+    raise Exception("No object found with '{0}' '{1}'".format(attr, value))
+
+
 def _escape_string(string):
     return string.replace('"', r'\"').replace('\n', r'\n')
 
